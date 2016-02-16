@@ -1,5 +1,4 @@
 function [spectrum, halfspectrum, omega]=me(P,A,B,omega)
-
 % [spectrum, halfspectrum, omega]=me(P,A,B,omega)
 %
 %  computes the maximum entropy spectrum
@@ -23,15 +22,22 @@ function [spectrum, halfspectrum, omega]=me(P,A,B,omega)
 %                          ...
 %                          fm1(0)             fmm(0     fm1(Dtheta) ... ]
 %
-%halfspectrum is the square-root of the spectrum
+%   halfspectrum is the square-root of the spectrum
 %   omega     is the range of frequencies
 %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+if nargin==3
+    omega=linspace(0,2*pi,200); 
+end
 
-if nargin==3, omega=linspace(0,2*pi,200); end
+assert(all(omega>=0) & all(omega<=2*pi),'me: 0<=omega<=2*pi')
+
 N=length(omega);
 
-iP=inv(P); e=inv(B'*iP*B); C1=e*B'*iP; [n,m]=size(B);
+iP=inv(P); 
+e=inv(B'*iP*B); 
+C1=e*B'*iP; 
+[n,m]=size(B);
 
 % Phi=C1*G(z); max entropy spectrum = Phi^{-1} e Phi^{-1}^*
 
@@ -40,21 +46,28 @@ rB=real(B);  iB=imag(B);  BB=[rB -iB; iB rB];
 rC=real(C1); iC=imag(C1); CC1=[rC -iC; iC rC];
 
 Phi_inv=ss(AA-BB*CC1*AA,BB,-CC1*AA,eye(2*m,2*m),1);
-HH=freqresp(Phi_inv,omega); H=HH(1:m,1:m,:)+1i*HH(m+1:2*m,1:m,:);
+HH=freqresp(Phi_inv,omega); 
+H=HH(1:m,1:m,:)+1i*HH(m+1:2*m,1:m,:);
 
-if m==1, h=squeeze(H); spectrum=real(diag(h*e*h'))';
+if m==1
+    h = squeeze(H);
+    spectrum = real(diag(h*e*h'))';
 else
-  %disp('The spectrum is matricial m*m, where m='), m,
-  spectrum=zeros(m,N*m); halfspectrum=zeros(m,N*m);
-  [Ue,svdOmega]=svd(e); sqrtsvdOmega=sqrt(svdOmega);
-  for i=1:N,
-  temp=H(:,:,i); %H(:,:,i)=temp*e*temp'; 
-  spectrum(:,(i-1)*m+1:i*m)=(temp*e*temp'); halfspectrum(:,(i-1)*m+1:i*m)=temp*Ue*sqrtsvdOmega;
-  end
+    %disp('The spectrum is matricial m*m, where m='), m,
+    spectrum=zeros(m,N*m); 
+    halfspectrum=zeros(m,N*m);
+    [Ue,svdOmega]=svd(e); 
+    sqrtsvdOmega=sqrt(svdOmega);
+    for i=1:N
+        temp=H(:,:,i); %H(:,:,i)=temp*e*temp'; 
+        spectrum(:,(i-1)*m+1:i*m)=(temp*e*temp'); 
+        halfspectrum(:,(i-1)*m+1:i*m)=temp*Ue*sqrtsvdOmega;
+    end
                 %spectrum=H;
 end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+end %function
+%%
 % Based on:
 %
 % [1] T.T. Georgiou, ``Spectral analysis based on the state covariance:

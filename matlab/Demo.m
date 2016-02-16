@@ -7,14 +7,12 @@
 % modern nonlinear methods (Capon, subspace, ME) where the
 % covariance information used consists of the state-covariance
 % of suitably selected "bandpass-like" input-to-state filter
-
-
 %% SIGNAL = sinusoids + noise
 %  Setting up the signal parameters and time history
-      N=100;
-      mag0=1.8;mag1=1.5; o1=1.3; mag2=2; o2=1.35;
-      t=0:N-1; t=t(:);
-      y=mag0*randn(N,1)+mag1*exp(1i*(o1*t+2*pi*rand))+mag2*exp(1i*(o2*t+2*pi*rand));
+N=100;
+mag0=1.8;mag1=1.5; o1=1.3; mag2=2; o2=1.35;
+t=0:N-1; t=t(:);
+y=mag0*randn(N,1)+mag1*exp(1i*(o1*t+2*pi*rand))+mag2*exp(1i*(o2*t+2*pi*rand));
 %% plotting the fft-based spectra
 NN=2048; th=linspace(0,2*pi,NN);
 Y =abs(fft(y,NN))/sqrt(N);
@@ -48,7 +46,7 @@ suptitle('FFT methods')
 %% setting up filter parameters and the svd of the input-to-state response
 
 thetamid=1.325; 
-[A,B]=cjordan(5,0.88*exp(thetamid*1i));
+[A,B]=cjordan(5,0.88*exp(thetamid*1j));
 sv=rsigma(A,B,th);
 
 figure(2)
@@ -87,7 +85,7 @@ xlabel('$\|G(e^{i\theta})\|$ v.s. $\theta$', 'Interpreter', 'Latex','FontSize', 
 %% obtaining state statistics
 R=dlsim_complex(A,B,y');
 %% maximum entropy
-figure(3);
+figure(3);clf(3)
 spectrum=me(R,A,B,th);
 me_burg = pburg(y,5,th);
 me_burg = me_burg/max(me_burg)*1.2;
@@ -99,7 +97,7 @@ subplot(1,2,1),hold on
                 legend('true spectral line', 'maximum entropy spectrum', 'Burg method');
                 arrow([o1 o2],[mag1,mag2])
                 set(gca,'xlim',[0 2*pi])
-                set(gca,'ylim',[0 2.5])
+                %set(gca,'ylim',[0 2.5])
                 k=15;
                 windowspec=max(spectrum)/2;
                 
@@ -120,7 +118,7 @@ subplot(1,2,1),hold on
                     end
                 end
                 
-                set(gca,'YTick',[]);
+                %set(gca,'YTick',[]);
                 xlabel('frequency','FontSize',14);
                 
 
