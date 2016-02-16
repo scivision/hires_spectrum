@@ -21,31 +21,37 @@ Y =abs(fft(y,NN))/sqrt(N);
 Y =Y.^2;
 Y = Y/max(Y)*1.3;
 figure(1);
+
 subplot(1,2,1),hold on
                 plot(o1, mag1, 'r^','MarkerSize',12);
                 plot(th,Y,'Color',[0,0.6,0],'LineWidth',1.2),
+                title('full')
                 legend('true spectral line', 'FFT-based');
-                arrow([o1 o2],[mag1,mag2],12);
+                arrow([o1, o2],[mag1,mag2])
                 set(gca,'xlim',[0 2*pi]);
                 set(gca,'ylim',[0 2.5]);              
                 set(gca,'YTick',[]);
-                XLabel('frequency','FontSize',14);
+                xlabel('frequency','FontSize',14);
 
 subplot(1,2,2),hold on
                plot(o1, mag1, 'r^','MarkerSize',12);
-               plot(th,Y,'Color',[0,0.6,0],'LineWidth',1.2),
+               plot(th,Y,'Color',[0,0.6,0],'LineWidth',1.2)
+               title('zoom')
                legend('true spectral line', 'FFT-based');
-               arrow([o1 o2],[mag1,mag2],12);
+               arrow([o1 o2],[mag1,mag2]);
                axis([1.2 1.5 0 2.5]);
                set(gca,'YTick',[]);
-               XLabel('frequency','FontSize',14);
-
+               xlabel('frequency','FontSize',14);
+               
+suptitle('FFT methods')
 
 %% setting up filter parameters and the svd of the input-to-state response
+
 thetamid=1.325; 
 [A,B]=cjordan(5,0.88*exp(thetamid*1i));
-sv=Rsigma(A,B,th);
-figure(2);
+sv=rsigma(A,B,th);
+
+figure(2)
 plot(th(:),sv(:),'r','LineWidth',1.3); hold on;
 [svmax, maxind]=max(sv);
 sv3db=svmax*sqrt(2)/2; % -3db value
@@ -91,13 +97,14 @@ subplot(1,2,1),hold on
                 plot(th, spectrum,'b','LineWidth',1.2);
                 plot(th, me_burg,'Color',[0,0.6,0],'LineWidth',1.2);
                 legend('true spectral line', 'maximum entropy spectrum', 'Burg method');
-                arrow([o1 o2],[mag1,mag2],12);
-                set(gca,'xlim',[0 2*pi]);
-                set(gca,'ylim',[0 2.5]);
+                arrow([o1 o2],[mag1,mag2])
+                set(gca,'xlim',[0 2*pi])
+                set(gca,'ylim',[0 2.5])
                 k=15;
                 windowspec=max(spectrum)/2;
-                plot([thmin thmin], [0 windowspec],'k','LineWidth',1.3);
-                plot([thmax thmax], [0 windowspec],'k','LineWidth',1.3);
+                
+                plot([thmin thmin], [0 windowspec],'k','LineWidth',1.3)
+                plot([thmax thmax], [0 windowspec],'k','LineWidth',1.3)
                 for v=0:windowspec/10:windowspec
                     h1 = thmin;
                     h2 = thmax;
@@ -114,7 +121,7 @@ subplot(1,2,1),hold on
                 end
                 
                 set(gca,'YTick',[]);
-                XLabel('frequency','FontSize',14);
+                xlabel('frequency','FontSize',14);
                 
 
 subplot(1,2,2),hold on
@@ -122,10 +129,10 @@ subplot(1,2,2),hold on
                 plot(th,spectrum,'b','LineWidth',1.2);
                 plot(th, me_burg,'Color',[0,0.6,0],'LineWidth',1.2);
                 legend('true spectral line', 'maximum entropy spectrum', 'Burg method');
-                arrow([o1 o2],[mag1,mag2],12);
+                arrow([o1 o2],[mag1,mag2])
                 axis([thmin thmax 0 3]);
                 set(gca,'YTick',[]);
-                XLabel('frequency','FontSize',14);
+                xlabel('frequency','FontSize',14);
   
               
 %% subspace method
@@ -142,11 +149,12 @@ subplot(1,2,1),hold on
                plot(omegas(1), residues(1), 'b^','MarkerSize',12);
                plot(w_esprit(1), r_esprit(1),'^','Color',[0,0.6,0],'MarkerSize',12);
                legend('true spectral line', 'subspace method spectral line', 'ESPRIT spectral line');
-               arrow([o1 o2],[mag1 mag2],12);
-               arrowb(omegas,residues,12);
-               arrowg(w_esprit,r_esprit,12);               
+               arrow([o1 o2],[mag1 mag2])
+               arrowb(omegas,residues)
+               arrowg(w_esprit,r_esprit)              
                 k=15;
                 windowspec=max(spectrum)/2;
+                
                 plot([thmin thmin], [0 windowspec],'k','LineWidth',1.3);
                 plot([thmax thmax], [0 windowspec],'k','LineWidth',1.3);
                 for v=0:windowspec/10:windowspec
@@ -166,19 +174,19 @@ subplot(1,2,1),hold on
                set(gca,'xlim',[0 2*pi]);
                set(gca,'ylim',[0 2.5]),
                set(gca,'YTick',[]);
-               XLabel('frequency','FontSize',14);
+               xlabel('frequency','FontSize',14);
 
 subplot(1,2,2),hold on
                plot(o1, mag1, 'r^','MarkerSize',12);
                plot(omegas(1), residues(1), 'b^','MarkerSize',12);
                plot(w_esprit(2), r_esprit(2),'^','Color',[0,0.6,0],'MarkerSize',12);
                legend('true spectral line', 'subspace method spectral line','ESPRIT spectral line');
-               arrow([o1 o2],[mag1 mag2],12);
-               arrowb(omegas,residues,12);
-               arrowg(w_esprit,r_esprit,12);
+               arrow([o1 o2],[mag1 mag2])
+               arrowb(omegas,residues)
+               arrowg(w_esprit,r_esprit)
                axis([thmin thmax 0 3]);
                set(gca,'YTick',[]);
-               XLabel('frequency','FontSize',14);
+               xlabel('frequency','FontSize',14);
  %% spectral evelop% sqrtrho=envlp(P,Ah,bh,th,.2);
 figure(5);
 rhohalf=envlp(R,A,B,th);
@@ -187,7 +195,7 @@ subplot(1,2,1),hold on
                plot(o1, mag1, 'r^','MarkerSize',12);
                plot(th,rho,'b','LineWidth',1.2),
                legend('true spectral line', 'spectral envelop');
-               arrow([o1 o2],[mag1 mag2],12);
+               arrow([o1 o2],[mag1 mag2])
                k=1;
                 windowspec=max(rho);
                 plot([thmin thmin], [0 windowspec],'k','LineWidth',1.3);
@@ -209,59 +217,63 @@ subplot(1,2,1),hold on
                set(gca,'xlim',[0 2*pi]),
                set(gca,'ylim',[0 max(rho)+10]),
                set(gca,'YTick',[]);
-               XLabel('frequency','FontSize',14);
+               xlabel('frequency','FontSize',14);
 subplot(1,2,2),hold on
                plot(o1, mag1, 'r^','MarkerSize',12);
                plot(th,rho,'b','LineWidth',1.2),
                legend('true spectral line', 'spectral envelop');
-               arrow([o1 o2],[mag1 mag2],12);
+               arrow([o1 o2],[mag1 mag2])
                axis([thmin thmax 0 3]);
                set(gca,'YTick',[]);
-               XLabel('frequency','FontSize',14);
+               xlabel('frequency','FontSize',14);
 %% moving average decomposition
 T=ToepProj(That);
-[Ts, Tma]=MA_decomp(T,1);
-r_ma=[fliplr(Tma(1,:)) Tma(1,2:end)];
-p_ma=abs(fft(r_ma,length(th)));
-[w_s,r_s]=sm(Ts,Ac,Bc,rank(Ts,0.001));
-figure(6);clf
+try
+    [Ts, Tma]=MA_decomp(T,1);
+    r_ma=[fliplr(Tma(1,:)) Tma(1,2:end)];
+    p_ma=abs(fft(r_ma,length(th)));
+    [w_s,r_s]=sm(Ts,Ac,Bc,rank(Ts,0.001));
+    figure(6);clf
 
-subplot(1,2,1),hold on
-               plot(o1, mag1, 'r^','MarkerSize',12);
-               plot(w_s(1), r_s(1), 'b^','MarkerSize',12);
-               plot(th,p_ma,'Color',[0,0.6,0],'LineWidth',1.2);
-               legend('true spectral line', 'estimated spectral line', 'MA spectrum');
-               arrow([o1 o2], [mag1 mag2],12);
-               arrowb(w_s,r_s,12);
-               k=15;
-               windowspec=max(spectrum)/2;
-               plot([thmin thmin], [0 windowspec],'k','LineWidth',1.3);
-               plot([thmax thmax], [0 windowspec],'k','LineWidth',1.3);
-               for v=0:windowspec/10:windowspec
-                    h1 = thmin;
-                    h2 = thmax;
-                    if(k*v<h1)
-                        plot([h1-k*v h1],[0 v],'Color',[.5,.5,.5]);
-                    else
-                        plot([0 h1],[v-h1/k v],'Color',[.5,.5,.5]);
+    subplot(1,2,1),hold on
+                   plot(o1, mag1, 'r^','MarkerSize',12);
+                   plot(w_s(1), r_s(1), 'b^','MarkerSize',12);
+                   plot(th,p_ma,'Color',[0,0.6,0],'LineWidth',1.2);
+                   legend('true spectral line', 'estimated spectral line', 'MA spectrum');
+                   arrow([o1 o2], [mag1 mag2])
+                   arrowb(w_s,r_s)
+                   k=15;
+                   windowspec=max(spectrum)/2;
+                   plot([thmin thmin], [0 windowspec],'k','LineWidth',1.3);
+                   plot([thmax thmax], [0 windowspec],'k','LineWidth',1.3);
+                   for v=0:windowspec/10:windowspec
+                        h1 = thmin;
+                        h2 = thmax;
+                        if(k*v<h1)
+                            plot([h1-k*v h1],[0 v],'Color',[.5,.5,.5]);
+                        else
+                            plot([0 h1],[v-h1/k v],'Color',[.5,.5,.5]);
+                        end
+                        if(k*v+h2<2*pi)
+                            plot([h2 h2+k*v],[v 0],'Color',[.5,.5,.5]);
+                        else
+                            plot([h2 2*pi],[v v-(-h2+2*pi)/k],'Color',[.5,.5,.5]);
+                        end
                     end
-                    if(k*v+h2<2*pi)
-                        plot([h2 h2+k*v],[v 0],'Color',[.5,.5,.5]);
-                    else
-                        plot([h2 2*pi],[v v-(-h2+2*pi)/k],'Color',[.5,.5,.5]);
-                    end
-                end
-               set(gca,'xlim',[0 2*pi]);
-               set(gca,'ylim',[0 5]),
-               set(gca,'YTick',[]);
-               XLabel('frequency','FontSize',14);
+                   set(gca,'xlim',[0 2*pi]);
+                   set(gca,'ylim',[0 5]),
+                   set(gca,'YTick',[]);
+                   xlabel('frequency','FontSize',14)
 
-subplot(1,2,2),hold on
-               plot(o1, mag1, 'r^','MarkerSize',12);
-               plot(w_s(1), r_s(1), 'b^','MarkerSize',12);
-               legend('true spectral line', 'estimated spectral line');
-               arrow([o1 o2], [mag1 mag2],12);
-               arrowb(w_s,r_s,12);
-               axis([thmin thmax 0 3]);
-               set(gca,'YTick',[]);
-               XLabel('frequency','FontSize',14);
+    subplot(1,2,2),hold on
+                   plot(o1, mag1, 'r^','MarkerSize',12)
+                   plot(w_s(1), r_s(1), 'b^','MarkerSize',12)
+                   legend('true spectral line', 'estimated spectral line');
+                   arrow([o1 o2], [mag1 mag2])
+                   arrowb(w_s,r_s,12);
+                   axis([thmin thmax 0 3])
+                   set(gca,'YTick',[]);
+                   xlabel('frequency','FontSize',14);
+catch
+    disp('This moving average code requires cvxr installed, see README.rst')
+end

@@ -31,13 +31,13 @@ M=[]; AE=E;
    AE=A*AE;
    R=real(AE); I=imag(AE);
    Rs=(R+R')/2; Ras=(R-R')/2; Is=(I+I')/2; Ias=(I-I')/2;
-   M1=Rs+j*Ias;
-   N1=-Is+j*Ras;
+   M1=Rs + 1j*Ias;
+   N1=-Is + 1j*Ras;
    pack=[pack cvec(M1) cvec(N1)];
 end
 
 ri=pack\Pvec;
-wpoly=[ri(1) ri(2:2:2*n-2)'+j*ri(3:2:2*n-1)'];
+wpoly=[ri(1) ri(2:2:2*n-2)' + 1j*ri(3:2:2*n-1)'];
 
 W=polyvalm(fliplr(wpoly),A);
 ProjP=(W*E+E*W')/2;
