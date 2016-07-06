@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
  Maximum Entropy Signal Analysis
 
@@ -35,46 +36,52 @@ halfspectrum is the square-root of the spectrum
  Written by Tryphon Georgiou -- last line (March 23, 2001, revised 5/2005,
  revised March, 2009)
 """
-from numpy import linspace
+from numpy import linspace,array,eye,diag
+from numpy.linalg import inv,svd,sqrt
+from scipy.signal import StateSpace,freqresp
 
-def maxent(P,A,B,omega):
-    if nargin==3:
+def maxent(P,A,B,omega=None):
+    assert P.ndim==2 and P.shape[0] == P.shape[1], 'P must be a square matrix'
+
+    if omega is None:
         omega=linspace(0,2*pi,200)
 
-    N=len(omega)
+    N = omega.size
 
-    iP=inv(P)
-    e=inv(B.T*iP*B)
-    C1=e*B.T*iP
+    iP = inv(P)
+    e  = inv(B.T @ iP @ B)
+    C1 = e @ B.T @ iP
     n,m = B.shape
 
 # Phi=C1*G(z); max entropy spectrum = Phi^{-1} e Phi^{-1}^*
 
     rA = A.real
-    iA = A.img
-    AA=[rA -iA; iA rA]
-    rB=B.real
-    iB=B.imag
-    BB=[rB -iB; iB rB]
-    rC=C1.real
-    iC=B1.imag
-    CC1=[rC -iC; iC rC]
+    iA = A.imag
+    AA = array([[rA, -iA],[iA, rA]])
+    rB = B.real
+    iB = B.imag
+    BB = array([[rB, -iB],[iB, rB]])
+    rC = C1.real
+    iC = B1.imag
+    CC1= array([[rC, -iC],[iC, rC]])
 
-    Phi_inv=ss(AA-BB*CC1*AA,BB,-CC1*AA,eye(2*m,2*m),1);
-    HH=freqresp(Phi_inv,omega); H=HH(1:m,1:m,:)+1i*HH(m+1:2*m,1:m,:);
+    Phi_inv = StateSpace(AA-BB*CC1*AA, BB, -CC1*AA, eye(2*m,2*m));
+
+    HH = freqresp(Phi_inv,omega)
+    H = HH[:m,:m,:] + 1j*HH[m:2*m,:m,:]
 
     if m==1:
-        h=squeeze(H)
-        spectrum=real(diag(h*e*h.T)).T
+        h = H.squeeze()
+        spectrum = diag(h @ e @ h.T).real.T
     else:
         print('The spectrum is matricial m*m, where m={}'.format(m))
-        spectrum = zeros(m,N*m)
-        halfspectrum = zeros(m,N*m)
-        [Ue,svdOmega]=svd(e)
-        sqrtsvdOmega=sqrt(svdOmega)
+        spectrum = zeros((m,N*m))
+        halfspectrum = zeros((m,N*m))
+        [Ue,svdOmega] = svd(e)
+        sqrtsvdOmega = sqrt(svdOmega)
         for i in range(N):
-            temp=H(:,:,i); %H(:,:,i)=temp*e*temp.T
-            spectrum(:,(i-1)*m+1:i*m)=(temp*e*temp.T)
-            halfspectrum(:,(i-1)*m+1:i*m)=temp*Ue*sqrtsvdOmega
+            temp=H[:,:,i]  #H(:,:,i)=temp*e*temp.T
+            spectrum[:,(i-1)*m:i*m]     = temp @ e  @ temp.T
+            halfspectrum[:,(i-1)*m:i*m] = temp @ Ue @ sqrtsvdOmega
 
     return spectrum, halfspectrum, omega
