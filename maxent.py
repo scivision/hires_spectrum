@@ -36,8 +36,8 @@ halfspectrum is the square-root of the spectrum
  Written by Tryphon Georgiou -- last line (March 23, 2001, revised 5/2005,
  revised March, 2009)
 """
-from numpy import linspace,array,eye,diag
-from numpy.linalg import inv,svd,sqrt
+from numpy import linspace,array,eye,diag,sqrt,pi,zeros
+from numpy.linalg import inv,svd
 from scipy.signal import StateSpace,freqresp
 
 def maxent(P,A,B,omega=None):
@@ -62,7 +62,7 @@ def maxent(P,A,B,omega=None):
     iB = B.imag
     BB = array([[rB, -iB],[iB, rB]])
     rC = C1.real
-    iC = B1.imag
+    iC = C1.imag
     CC1= array([[rC, -iC],[iC, rC]])
 
     Phi_inv = StateSpace(AA-BB*CC1*AA, BB, -CC1*AA, eye(2*m,2*m));
@@ -74,7 +74,7 @@ def maxent(P,A,B,omega=None):
         h = H.squeeze()
         spectrum = diag(h @ e @ h.T).real.T
     else:
-        print('The spectrum is matricial m*m, where m={}'.format(m))
+        print('The spectrum is matricial m*m, where m=',m)
         spectrum = zeros((m,N*m))
         halfspectrum = zeros((m,N*m))
         [Ue,svdOmega] = svd(e)
